@@ -42,11 +42,11 @@ def read_joystick():
 
     if y_val > 40000 and direction != "DOWN":  # Up
         direction = "UP"
-    elif y_val < 10000 and direction != "UP":  # Down
+    elif y_val < 20000 and direction != "UP":  # Down
         direction = "DOWN"
     elif x_val > 40000 and direction != "LEFT":  # Right
         direction = "RIGHT"
-    elif x_val < 10000 and direction != "RIGHT":  # Left
+    elif x_val < 20000 and direction != "RIGHT":  # Left
         direction = "LEFT"
 
 # Function to move the snake
@@ -67,12 +67,8 @@ def move_snake():
 
     # Check for collisions
     if (head_x, head_y) in snake or head_x < 0 or head_x >= 128 or head_y < 0 or head_y >= 64:
-        oled.fill(0)
-        oled.text("GAME OVER!", 30, 30)
-        oled.show()
-        time.sleep(3)
         snake[:] = [(30, 30), (25, 30), (20, 30)]  # Reset snake
-        return
+        return False
 
     # Insert new head
     snake.insert(0, (head_x, head_y))
@@ -82,6 +78,8 @@ def move_snake():
         food = generate_food()  # Generate new food
     else:
         snake.pop()  # Remove tail if no food eaten
+    
+    return True
 
 
 # Function to draw the snake and food
@@ -97,10 +95,33 @@ def draw_game():
 
     oled.show()  # Update display
 
+# Main game logic
+def start_game():
+    oled.fill(0)
+    oled.text("SNAKE GAME", 30, 30)
+    oled.show()
+    time.sleep(3)
+    return
 
-# Main game loop
-while True:
-    read_joystick()  # Read input
-    move_snake()  # Move snake
-    draw_game()  # Update display
-    time.sleep(0.25)  # Control game speed
+def load_game():
+    while True:
+        read_joystick()  # Read input
+        if not move_snake():  # Move snake
+            return
+        draw_game()  # Update display
+        time.sleep(0.25)  # Control game speed
+        
+def game_over():
+    oled.fill(0)
+    oled.text("GAME OVER!", 30, 30)
+    oled.show()
+    time.sleep(3)
+    return
+
+def game_control():
+    while True:
+        start_game()
+        load_game()
+        game_over()
+
+game_control()
