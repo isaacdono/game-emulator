@@ -1,12 +1,12 @@
-from machine import Pin, I2C
-import ssd1306
+from machine import Pin, SoftI2C
+from ssd1306 import SSD1306_I2C
 import time
 
 # Initialize I2C (Adjust pins if necessary)
-i2c = I2C(0, scl=Pin(1), sda=Pin(0), freq=400000)  
+i2c = SoftI2C(scl=Pin(15), sda=Pin(14))
 
 # Initialize OLED Display (128x64)
-oled = ssd1306.SSD1306_I2C(128, 64, i2c)
+oled = SSD1306_I2C(128, 64, i2c)
 
 # Test: Display "Snake Game"
 oled.fill(0)  # Clear screen
