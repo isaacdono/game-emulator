@@ -26,6 +26,7 @@ def generate_food():
             return (food_x, food_y)
 
 food = generate_food()
+score = 0
 
 # Max and Min values readings
 # Y: 29415  X: 33064 -> Center
@@ -51,7 +52,7 @@ def read_joystick():
 
 # Function to move the snake
 def move_snake():
-    global snake, food
+    global snake, food, score
 
     head_x, head_y = snake[0]  # Get current head position
 
@@ -75,6 +76,7 @@ def move_snake():
 
     # Check if snake eats food
     if (head_x, head_y) == food:
+        score += 1
         food = generate_food()  # Generate new food
     else:
         snake.pop()  # Remove tail if no food eaten
@@ -98,7 +100,7 @@ def draw_game():
 # Main game logic
 def start_game():
     oled.fill(0)
-    oled.text("SNAKE GAME", 30, 30)
+    oled.text("SNAKE GAME", 25, 30)
     oled.show()
     time.sleep(3)
     return
@@ -112,8 +114,11 @@ def load_game():
         time.sleep(0.25)  # Control game speed
         
 def game_over():
+    global score
     oled.fill(0)
-    oled.text("GAME OVER!", 30, 30)
+    oled.text("GAME OVER!", 25, 20)
+    oled.text("Score: " + str(score), 25, 40)
+    score = 0
     oled.show()
     time.sleep(3)
     return
