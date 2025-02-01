@@ -1,6 +1,6 @@
 import random
 import time
-from machine import ADC, Pin, SoftI2C
+from machine import ADC, PWM, Pin, SoftI2C
 from ssd1306 import SSD1306_I2C
 
 class SnakeGame:
@@ -12,6 +12,14 @@ class SnakeGame:
         # Initialize Joystick
         self.x_axis = ADC(Pin(27))  # GP27 -> X-axis
         self.y_axis = ADC(Pin(26))  # GP26 -> Y-axis
+    
+        # Initialize Buttons
+        self.button_a = Pin(5, Pin.IN, Pin.PULL_UP)
+        self.button_b = Pin(6, Pin.IN, Pin.PULL_UP)
+
+        # Initialize Left Buzzer (GP21)
+        self.buzzer = PWM(Pin(21))
+        self.buzzer.duty_u16(0)  # Start off
 
         # Snake Initial State
         self.snake = [(30, 30), (25, 30), (20, 30)]
@@ -24,10 +32,18 @@ class SnakeGame:
         """Generates a new random food position."""
 
         while True:
-            food_x = random.randint(0, 24) * 5  # Grid of 5px steps
-            food_y = random.randint(0, 12) * 5  
+            food_x = random.randint(1, 24) * 5  # Grid of 5px steps
+            food_y = random.randint(1, 12) * 5  
             if (food_x, food_y) not in self.snake:
                 return (food_x, food_y)
+            
+    def play_tone(self, frequency, duration):
+        """Plays a tone on the buzzer (only for passive buzzers)."""
+
+        self.buzzer.freq(frequency)
+        self.buzzer.duty_u16(20000)  # Set duty cycle (<50%)
+        time.sleep(duration)
+        self.buzzer.duty_u16(0)  # Turn off buzzer
 
     def read_joystick(self):
         """Reads the joystick and updates the snake's direction."""
@@ -59,7 +75,8 @@ class SnakeGame:
             head_x += 5
 
         # Collision detection (walls or itself)
-        if (head_x, head_y) in self.snake or head_x < 0 or head_x >= 128 or head_y < 0 or head_y >= 64:
+        if (head_x, head_y) in self.snake or head_x < 1 or head_x >= 127 or head_y < 1 or head_y >= 63:
+            self.play_tone(200, 0.3)  # Game Over sound
             self.running = False
             return
 
@@ -70,6 +87,7 @@ class SnakeGame:
         if (head_x, head_y) == self.food:
             self.score += 1
             self.food = self.generate_food()
+            self.play_tone(660, 0.1)  # Food eaten sound
         else:
             self.snake.pop()  # Remove tail if no food eaten
 
@@ -77,6 +95,9 @@ class SnakeGame:
         """Renders the snake and food on the OLED."""
 
         self.oled.fill(0)
+
+        # Draw rectangle 
+        self.oled.rect(0, 0, 128, 64, 1)  # (x, y, width, height, color)
 
         # Draw food
         self.oled.pixel(self.food[0], self.food[1], 1)
@@ -91,9 +112,21 @@ class SnakeGame:
         """Initial game screen."""
 
         self.oled.fill(0)
-        self.oled.text("SNAKE GAME", 25, 30)
+
+        # Text
+        self.oled.text("SNAKE GAME", 25, 10)
+        self.oled.text("Press A: Start", 10, 30)
+        self.oled.text("Press B: Exit", 10, 40)
         self.oled.show()
-        time.sleep(3)
+
+        # Play or Close
+        while True:
+            if not self.button_a.value():
+                self.running = True
+                return
+            elif not self.button_b.value():
+                self.running = False
+                return
 
     def game_over(self):
         """Handles game over screen and resets the game."""
@@ -109,21 +142,24 @@ class SnakeGame:
         self.direction = "RIGHT"
         self.food = self.generate_food()
         self.score = 0
-        self.running = True
 
     def game_loop(self):
         """Main game loop."""
-        
+
         while True:
-            self.running = True  # Start a new round
-            self.start_game()
+            self.start_game() # Start or Exit options
+
+            if not self.running: # Player closed the game
+                self.oled.fill(0)
+                self.oled.show()
+                return
 
             while self.running:
                 self.read_joystick()
                 self.move_snake()
                 self.draw_game()
                 time.sleep(0.25)  # Game speed
-
+            
             self.game_over()
 
 
