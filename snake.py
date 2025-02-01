@@ -1,4 +1,4 @@
-from machine import Pin, SoftI2C
+from machine import ADC, Pin, SoftI2C
 from ssd1306 import SSD1306_I2C
 import time
 
@@ -16,3 +16,17 @@ oled.show()
 time.sleep(2)
 oled.fill(0)
 oled.show()
+
+# ---------------------------------------------------------
+
+# Initialize Joystick (ADC)
+x_axis = ADC(Pin(26))  # GP26 -> X-axis
+y_axis = ADC(Pin(27))  # GP27 -> Y-axis
+
+while True:
+    x_val = x_axis.read_u16()  # Read X (0-65535)
+    y_val = y_axis.read_u16()  # Read Y (0-65535)
+
+    print("X:", x_val, " Y:", y_val)  # Print values
+    time.sleep(0.2)  # Small delay
+
