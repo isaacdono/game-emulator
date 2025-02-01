@@ -1,17 +1,21 @@
-# Pico W Game Emulator
+# Pico W Game Emulator  
 
-## Introduction
+## Introduction  
 
-This project runs on the BitDogLab, an educational STEM device that is equipped with a Raspberry Pi Pico W and pheriphals, such as: an I2C 128x64 screen, buttons, a joystick, buzzers, LEDs, etc.
+This project runs on BitDogLab, an educational STEM device equipped with a Raspberry Pi Pico W and various peripherals, including:  
+- RP2040 microcontroller (Raspberry Pi Pico W)  
+- SSD1306 OLED screen (128x64, I2C)  
+- Analog joystick (X/Y axis for movement)  
+- Buttons (for menu interaction)  
+- Buzzer (for sound effects)
+- Microphone (I2C)
 
-The ideia behind this project is to play classic games like Snake, Pong and Space Invaders in a Embedded Enviroment using MicroPython.
+The goal is to play classic games like Snake, Pong, and Space Invaders in an embedded environment using MicroPython.  
 
-## Development
+## Demonstration
+<!-- Place images and videos -->
 
-To DIY, you'll need:
-
-* RP2040 microcontroller
-* SSD1306 screen
-* joystick
-
-The key parts of the code:
+## How to Run the Project  
+1. Flash MicroPython onto the Raspberry Pi Pico W  
+2. Copy the `.py` files to the Pico W using Thonny IDE  
+3. Run `main.py`  
