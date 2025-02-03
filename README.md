@@ -2,15 +2,14 @@
 
 ## Introduction  
 
-This project runs on BitDogLab, an educational STEM device equipped with a Raspberry Pi Pico W and various peripherals, including:  
+This project runs on BitDogLab, an educational STEM device equipped with a Raspberry Pi Pico W and various peripherals. The goal is to play classic games like Snake, Pong, and Space Invaders in an embedded environment using MicroPython.  
+
+### Hardware Components
 - RP2040 microcontroller (Raspberry Pi Pico W)  
 - SSD1306 OLED screen (128x64, I2C)  
 - Analog joystick (X/Y axis for movement)  
 - Buttons (for menu interaction)  
 - Buzzer (for sound effects)
-- Microphone (I2C)
-
-The goal is to play classic games like Snake, Pong, and Space Invaders in an embedded environment using MicroPython.  
 
 ## Demonstration
 <!-- Place images and videos -->
