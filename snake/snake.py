@@ -44,6 +44,8 @@ class SnakeGame:
         self.running = True  # Game running flag
 
     def light_leds(self):
+        """Acende os LEDs em formato de cobra e maçã."""
+
         colors = [
             BLACK, BLACK, GREEN, GREEN, GREEN, # Mirrored sequence
             BLACK, BLACK, GREEN, BLACK, BLACK, # Mirrored sequence
@@ -58,6 +60,8 @@ class SnakeGame:
         self.np.write()
 
     def clear_all(self):
+        """Apaga os LEDs."""
+
         for i in range(len(self.np)):
             self.np[i] = BLACK
         self.np.write()
