@@ -2,9 +2,24 @@ import random
 import time
 from machine import ADC, PWM, Pin, SoftI2C
 from ssd1306 import SSD1306_I2C
+import neopixel
+
+RED = (25, 0, 0)
+GREEN = (0, 25, 0)
+BLUE = (0, 0, 50)
+YELLOW = (30, 30, 0)
+MAGENTA = (30, 0, 30)
+CYAN = (0, 30, 30)
+WHITE = (25, 25, 25)
+BLACK = (0, 0, 0)
+NUM_LEDS = 25
 
 class SnakeGame:
     def __init__(self):
+        
+        # Initialize LED Matrix
+        self.np = neopixel.NeoPixel(Pin(7), NUM_LEDS)
+
         # Initialize Display
         i2c = SoftI2C(scl=Pin(15), sda=Pin(14))
         self.oled = SSD1306_I2C(128, 64, i2c)
@@ -27,6 +42,25 @@ class SnakeGame:
         self.food = self.generate_food()
         self.score = 0
         self.running = True  # Game running flag
+
+    def light_leds(self):
+        colors = [
+            BLACK, BLACK, GREEN, GREEN, GREEN, # Mirrored sequence
+            BLACK, BLACK, GREEN, BLACK, BLACK, # Mirrored sequence
+            GREEN, GREEN, GREEN, BLACK, BLACK, # Mirrored sequence
+            BLACK, BLACK, BLACK, BLACK, GREEN,
+            RED, BLACK, BLACK, BLACK, BLACK
+        ]
+
+        for i, color in enumerate(colors):
+            self.np[i] = color
+
+        self.np.write()
+
+    def clear_all(self):
+        for i in range(len(self.np)):
+            self.np[i] = BLACK
+        self.np.write()
 
     def generate_food(self):
         """Generates a new random food position."""
@@ -146,12 +180,14 @@ class SnakeGame:
     def game_loop(self):
         """Main game loop."""
 
+        self.light_leds()
         while True:
             self.start_game() # Start or Exit options
 
             if not self.running: # Player closed the game
                 self.oled.fill(0)
                 self.oled.show()
+                self.clear_all()
                 return
 
             while self.running:

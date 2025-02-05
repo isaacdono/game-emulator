@@ -16,6 +16,5 @@ The goal is to play classic games like Snake, Pong, and Space Invaders in an emb
 <!-- Place images and videos -->
 
 ## How to Run the Project  
-1. Flash MicroPython onto the Raspberry Pi Pico W  
-2. Copy the `.py` files to the Pico W using Thonny IDE  
-3. Run `main.py`  
+1. Flash MicroPython firmware onto the Raspberry Pi Pico W  
+2. Run `snake.py` file in Pico W using VS Code  
